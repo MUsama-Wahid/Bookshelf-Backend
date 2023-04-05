@@ -2,6 +2,17 @@ const asyncHandler = require("express-async-handler");
 const Books = require("../models/booksModel");
 
 
+// Get all books of logedin user
+const getBooks = asyncHandler(async (req, res) => {
+  const books = await Books.find({ user_id: req.user.id });
+  res.status(200).json(books);
+});
+
+// Get public books
+const getpubBooks = asyncHandler(async (req, res) => {
+    const books = await Books.find({ bookType: "public" });
+    res.status(200).json(books);
+  });
 
 //Create New books
 const createBooks = asyncHandler(async (req, res) => {
@@ -19,6 +30,16 @@ const createBooks = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(books);
+});
+
+//Get book by id
+const getBook = asyncHandler(async (req, res) => {
+  const books = await Books.findById(req.params.id);
+  if (!books) {
+    res.status(404);
+    throw new Error("Book not found");
+  }
+  res.status(200).json(books);
 });
 
 //Update books
@@ -58,8 +79,11 @@ const deleteBooks = asyncHandler(async (req, res) => {
   res.status(200).json(books);
 });
 
-
-
 module.exports = {
-  createBooks,updateBooks,deleteBooks
+  getBooks,
+  createBooks,
+  getBook,
+  updateBooks,
+  deleteBooks,
+  getpubBooks
 };
