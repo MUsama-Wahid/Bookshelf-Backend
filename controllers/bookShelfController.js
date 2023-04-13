@@ -29,16 +29,13 @@ const addToShelf = asyncHandler(async (req, res) => {
 
   //Delete book
 const delFromShelf = asyncHandler(async (req, res) => {
-    const books = await Bookshelf.findById(req.params.id);
+  const bookId = req.params.id
+    const books = await Bookshelf.find({bookId});
     if (!books) {
       res.status(404);
       throw new Error("Book not found");
     }
-    if (books.userId.toString() !== req.user.id) {
-      res.status(403);
-      throw new Error("User don't have permission to update other user books");
-    }
-    await Bookshelf.deleteOne({ _id: req.params.id });
+    await Bookshelf.deleteOne({ bookId: req.params.id ,userId:req.user.id });
     res.status(200).json(books);
   });
 
