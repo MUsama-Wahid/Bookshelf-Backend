@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Books = require("../models/booksModel");
+const Bookshelf =require("../models/bookShelfModel")
 
 
 // Get all books of logedin user
@@ -48,6 +49,13 @@ const updateBooks = asyncHandler(async (req, res) => {
   if (!books) {
     res.status(404);
     throw new Error("Book not found");
+  }
+  if(req.body.bookType== 'private')
+  {
+    const bookss = await Bookshelf.find({bookId:req.params.id});
+    if(bookss){
+      await Bookshelf.deleteOne({ bookId: req.params.id});
+    }
   }
 
   if (books.user_id.toString() !== req.user.id) {
